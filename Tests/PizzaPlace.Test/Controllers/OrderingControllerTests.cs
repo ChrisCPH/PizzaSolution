@@ -20,7 +20,7 @@ public class OrderingControllerTests
 
         var orderingService = new Mock<IOrderingService>(MockBehavior.Strict);
         orderingService.Setup(x => x.HandlePizzaOrder(order))
-            .ReturnsAsync([]); // Doesn't matter.
+            .ReturnsAsync(Guid.NewGuid()); // Doesn't matter.
 
         var controller = GetController(orderingService);
 

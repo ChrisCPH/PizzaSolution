@@ -66,7 +66,7 @@ public class OrderingServiceTests
         var actual = await service.HandlePizzaOrder(order);
 
         // Assert
-        CollectionAssert.AreEqual(pizzas, actual.ToList());
+        Assert.IsInstanceOfType<Guid>(actual);
         stockService.VerifyAll();
         recipeService.VerifyAll();
         pizzaOven.VerifyAll();

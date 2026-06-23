@@ -41,4 +41,13 @@ public class StockService(IStockRepository stockRepository) : IStockService
 
         return stock;
     }
+
+    public async Task<ComparableList<StockDto>> Restock(ComparableList<StockDto> stock)
+    {
+        ComparableList<StockDto> updatedStock = [];
+        foreach (var stockDto in stock)
+            updatedStock.Add(await stockRepository.AddToStock(stockDto));
+
+        return updatedStock;
+    }
 }

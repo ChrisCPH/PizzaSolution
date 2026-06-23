@@ -40,7 +40,7 @@ public class MenuService : IMenuService
     {
         var hour = menuDate.UtcDateTime.Hour;
 
-        return hour >= 11 && hour < 14
+        return hour >= 11 && hour < 14 // Lunch hours are from 11:00 to 14:00 UTC
             ? LunchMenu
             : StandardMenu;
     }
