@@ -30,8 +30,13 @@ builder.Services.AddOpenApiDocument(d =>
 var services = builder.Services;
 services.AddSingleton(TimeProvider.System);
 
-services.AddTransient<IStockRepository, FakeStockRepository>();
-services.AddTransient<IRecipeRepository, FakeRecipeRepository>();
+var fakeStockRepo = new FakeStockRepository();
+fakeStockRepo.AddStandardStock();
+services.AddSingleton<IStockRepository>(fakeStockRepo);
+
+var fakeRecipeRepo = new FakeRecipeRepository();
+fakeRecipeRepo.AddStandardRecipes();
+services.AddSingleton<IRecipeRepository>(fakeRecipeRepo);
 
 services.AddTransient<IPizzaOven, NormalPizzaOven>();
 services.AddTransient<IPizzaOven, AssemblyLinePizzaOven>();
@@ -39,7 +44,7 @@ services.AddTransient<IPizzaOven, GiantRevolvingPizzaOven>();
 
 services.AddTransient<IStockService, StockService>();
 services.AddTransient<IRecipeService, RecipeService>();
-services.AddTransient<IOrderingService, OrderingService>();
+services.AddSingleton<IOrderingService, OrderingService>();
 services.AddTransient<IMenuService, MenuService>();
 
 var app = builder.Build();

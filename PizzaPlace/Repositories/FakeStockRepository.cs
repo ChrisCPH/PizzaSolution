@@ -51,4 +51,34 @@ public class FakeStockRepository : FakeDatabase<StockDto>, IStockRepository
             return Task.FromResult(stock with { Amount = amount, Id = 0 });
         }
     }
+
+    public void AddStandardStock()
+    {
+        if (Get(_ => true).Any())
+            return;
+
+        var stock = new List<StockDto>
+        {
+            new(StockType.Dough, 100),
+            new(StockType.FermentedDough, 100),
+            new(StockType.Tomatoes, 100),
+            new(StockType.RottenTomatoes, 100),
+            new(StockType.UnicornDust, 100),
+            new(StockType.Anchovies, 100),
+            new(StockType.BellPeppers, 100),
+            new(StockType.GratedCheese, 100),
+            new(StockType.UngratedCheese, 100),
+            new(StockType.GenericSpices, 100),
+            new(StockType.UngenericSpices, 100),
+            new(StockType.Sulphur, 100),
+            new(StockType.Bacon, 100),
+            new(StockType.DoubleBacon, 100),
+            new(StockType.TrippleBacon, 100),
+            new(StockType.RayOfSunshine, 100),
+            new(StockType.Chocolate, 100),
+        };
+
+        foreach (var s in stock)
+            AddToStock(s).GetAwaiter().GetResult();
+    }
 }

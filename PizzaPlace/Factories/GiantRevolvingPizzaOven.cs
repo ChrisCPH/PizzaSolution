@@ -14,6 +14,17 @@ public class GiantRevolvingPizzaOven(TimeProvider timeProvider) : PizzaOven(time
 
     protected override void PlanPizzaMaking(IEnumerable<(PizzaRecipeDto Recipe, Guid Guid)> recipeOrders)
     {
-        throw new NotImplementedException();
+        var orders = recipeOrders.ToList();
+        var maxCookingTime = orders.Max(x => x.Recipe.CookingTimeMinutes);
+
+        foreach (var (recipe, guid) in orders)
+        {
+            _pizzaQueue.Enqueue((MakePizza(recipe, maxCookingTime), guid));
+        }
     }
+    private Func<Task<Pizza?>> MakePizza(PizzaRecipeDto recipe, int cookingTimeMinutes) => async () =>
+    {
+        await CookPizza(cookingTimeMinutes);
+        return GetPizza(recipe.RecipeType);
+    };
 }
