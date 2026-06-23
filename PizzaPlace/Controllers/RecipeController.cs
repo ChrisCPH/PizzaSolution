@@ -1,0 +1,22 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using PizzaPlace.Models;
+using PizzaPlace.Services;
+
+namespace PizzaPlace.Controllers
+{
+    [Route("api/recipe")]
+    public class RecipeController(IRecipeService recipeService) : ControllerBase
+    {
+        [HttpPost]
+        public async Task<IActionResult> AddRecipe([FromBody] PizzaRecipeDto recipe)
+        {
+            return Ok(await recipeService.AddRecipe(recipe));
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateRecipe([FromBody] PizzaRecipeDto recipe)
+        {
+            return Ok(await recipeService.UpdateRecipe(recipe));
+        }
+    }
+}

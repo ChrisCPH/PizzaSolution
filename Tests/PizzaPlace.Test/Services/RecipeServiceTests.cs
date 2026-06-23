@@ -38,4 +38,82 @@ public class RecipeServiceTests
         // Assert
         Assert.AreEqual(expected, actual);
     }
+
+    [TestMethod]
+    public async Task AddRecipe()
+    {
+        // Arrange
+        var recipe = new PizzaRecipeDto(PizzaRecipeType.StandardPizza,
+            [new StockDto(StockType.Dough, 1)], 10);
+
+        var recipeRepository = new Mock<IRecipeRepository>(MockBehavior.Strict);
+        recipeRepository.Setup(x => x.AddRecipe(recipe))
+            .ReturnsAsync(1L);
+
+        var service = GetService(recipeRepository);
+
+        // Act
+        var actual = await service.AddRecipe(recipe);
+
+        // Assert
+        Assert.AreEqual(recipe, actual);
+        recipeRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task AddRecipe_AlreadyExists_Throws()
+    {
+        // Arrange
+        var recipe = new PizzaRecipeDto(PizzaRecipeType.StandardPizza,
+            [new StockDto(StockType.Dough, 1)], 10);
+
+        var recipeRepository = new Mock<IRecipeRepository>(MockBehavior.Strict);
+        recipeRepository.Setup(x => x.AddRecipe(recipe))
+            .ThrowsAsync(new PizzaException($"Recipe already added for {recipe.RecipeType}."));
+
+        var service = GetService(recipeRepository);
+
+        // Act & Assert
+        await Assert.ThrowsExceptionAsync<PizzaException>(() => service.AddRecipe(recipe));
+        recipeRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task UpdateRecipe()
+    {
+        // Arrange
+        var recipe = new PizzaRecipeDto(PizzaRecipeType.StandardPizza,
+            [new StockDto(StockType.Dough, 2)], 15);
+
+        var recipeRepository = new Mock<IRecipeRepository>(MockBehavior.Strict);
+        recipeRepository.Setup(x => x.UpdateRecipe(recipe))
+            .ReturnsAsync(recipe);
+
+        var service = GetService(recipeRepository);
+
+        // Act
+        var actual = await service.UpdateRecipe(recipe);
+
+        // Assert
+        Assert.AreEqual(recipe, actual);
+        recipeRepository.VerifyAll();
+    }
+
+    [TestMethod]
+    public async Task UpdateRecipe_DoesNotExist_Throws()
+    {
+        // Arrange
+        var recipe = new PizzaRecipeDto(PizzaRecipeType.StandardPizza,
+            [new StockDto(StockType.Dough, 2)], 15);
+
+        var recipeRepository = new Mock<IRecipeRepository>(MockBehavior.Strict);
+        recipeRepository.Setup(x => x.UpdateRecipe(recipe))
+            .ThrowsAsync(new PizzaException($"Recipe does not exist for {recipe.RecipeType}."));
+
+        var service = GetService(recipeRepository);
+
+        // Act & Assert
+        await Assert.ThrowsExceptionAsync<PizzaException>(() => service.UpdateRecipe(recipe));
+        recipeRepository.VerifyAll();
+    }
 }

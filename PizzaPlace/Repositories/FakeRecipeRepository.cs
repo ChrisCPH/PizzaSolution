@@ -27,6 +27,18 @@ public class FakeRecipeRepository : FakeDatabase<PizzaRecipeDto>, IRecipeReposit
         return Task.FromResult(recipe);
     }
 
+    public Task<PizzaRecipeDto> UpdateRecipe(PizzaRecipeDto recipe)
+    {
+        lock (_lock)
+        {
+            var existing = Get(x => x.RecipeType == recipe.RecipeType)
+                .FirstOrDefault() ?? throw new PizzaException($"Recipe does not exist for {recipe.RecipeType}.");
+
+            Update(recipe with { Id = existing.Id }, existing.Id);
+            return Task.FromResult(recipe);
+        }
+    }
+
     public void AddStandardRecipes()
     {
         if (Get(_ => true).Any())
