@@ -5,7 +5,7 @@ using PizzaPlace.Repositories;
 namespace PizzaPlace.Test.Repositories;
 
 [TestClass]
-public class StockRepositoryTests
+public class FakeStockRepositoryTests
 {
     private static IStockRepository GetStockRepository() => new FakeStockRepository();
 

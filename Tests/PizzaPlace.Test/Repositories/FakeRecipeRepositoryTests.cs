@@ -5,7 +5,7 @@ using PizzaPlace.Repositories;
 namespace PizzaPlace.Test.Repositories;
 
 [TestClass]
-public class RecipeRepositoryTests
+public class FakeRecipeRepositoryTests
 {
     private static IRecipeRepository GetRecipeRepository() => new FakeRecipeRepository();
 
