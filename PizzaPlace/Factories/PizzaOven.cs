@@ -43,8 +43,6 @@ public abstract class PizzaOven(TimeProvider timeProvider) : IPizzaOven
             }
         }
 
-        AddPizzaTasks();
-
         return readyPizzas;
     }
 
@@ -70,17 +68,9 @@ public abstract class PizzaOven(TimeProvider timeProvider) : IPizzaOven
 
     private async Task<(Pizza?, Guid)> GetNextReadyPizza()
     {
-        AddPizzaTasks();
+        while (AddPizzaTask()) { }
         var donePizza = await Task.WhenAny(_pizzasInOven.Values);
         return await donePizza;
-    }
-
-    private void AddPizzaTasks()
-    {
-        while (AddPizzaTask())
-        {
-            // Adding pizza task.
-        }
     }
 
     private bool AddPizzaTask()
