@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PizzaPlace.Controllers;
 using PizzaPlace.Models;
-using PizzaPlace.Models.Types;
 using PizzaPlace.Services;
 
 namespace PizzaPlace.Test.Controllers;
@@ -16,16 +15,17 @@ public class OrderingControllerTests
     public async Task PlacePizzaOrder()
     {
         // Arrange
-        var order = new PizzaOrder([new PizzaAmount(PizzaRecipeType.EmptyPizza, 1)]);
+        var request = new PizzaOrderRequest([new MenuOrderAmount(10, 1)]);
+        var result = new PizzaOrderResult(Guid.NewGuid(), 5, 80, [new OrderedItemResult("Mystery Pizza", 1, 80)]);
 
         var orderingService = new Mock<IOrderingService>(MockBehavior.Strict);
-        orderingService.Setup(x => x.HandlePizzaOrder(order))
-            .ReturnsAsync(Guid.NewGuid()); // Doesn't matter.
+        orderingService.Setup(x => x.HandlePizzaOrder(request))
+            .ReturnsAsync(result);
 
         var controller = GetController(orderingService);
 
         // Act
-        var actual = await controller.PlacePizzaOrder(order);
+        var actual = await controller.PlacePizzaOrder(request);
 
         // Assert
         Assert.IsInstanceOfType<OkObjectResult>(actual);
