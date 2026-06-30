@@ -23,19 +23,41 @@ public class AssemblyLinePizzaOven(TimeProvider timeProvider) : PizzaOven(timePr
 
         foreach (var (recipe, guid) in recipeOrders)
         {
-            int cookingTime;
-            if (!cookingTimeByType.TryGetValue(recipe.RecipeType, out var previousTime))
-            {
-                cookingTime = recipe.CookingTimeMinutes + SetupTimeMinutes;
-            }
-            else
-            {
-                cookingTime = Math.Max(previousTime - SubsequentPizzaTimeSavingsInMinutes, MinimumCookingTimeMinutes);
-            }
-
-            cookingTimeByType[recipe.RecipeType] = cookingTime;
+            var cookingTime = NextCookingTime(cookingTimeByType, recipe);
             _pizzaQueue.Enqueue((MakePizza(recipe, cookingTime), guid));
         }
+    }
+
+    public override int CalculateCookingTime(ComparableList<PizzaPrepareOrder> order)
+    {
+        var cookingTimeByType = new Dictionary<PizzaRecipeType, int>();
+        var total = 0;
+
+        foreach (var prepareOrder in order)
+        {
+            for (var i = 0; i < prepareOrder.OrderAmount; i++)
+            {
+                total += NextCookingTime(cookingTimeByType, prepareOrder.RecipeDto);
+            }
+        }
+
+        return total;
+    }
+
+    private static int NextCookingTime(Dictionary<PizzaRecipeType, int> cookingTimeByType, PizzaRecipeDto recipe)
+    {
+        int cookingTime;
+        if (!cookingTimeByType.TryGetValue(recipe.RecipeType, out var previousTime))
+        {
+            cookingTime = recipe.CookingTimeMinutes + SetupTimeMinutes;
+        }
+        else
+        {
+            cookingTime = Math.Max(previousTime - SubsequentPizzaTimeSavingsInMinutes, MinimumCookingTimeMinutes);
+        }
+
+        cookingTimeByType[recipe.RecipeType] = cookingTime;
+        return cookingTime;
     }
 
     private Func<Task<Pizza?>> MakePizza(PizzaRecipeDto recipe, int cookingTimeMinutes) => async () =>

@@ -9,28 +9,28 @@ public class OrderingController(
     IOrderingService orderingService) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> PlacePizzaOrder([FromBody] PizzaOrder pizzaOrder)
+    public async Task<IActionResult> PlacePizzaOrder([FromBody] PizzaOrderRequest pizzaOrderRequest)
     {
-        var orderId = await orderingService.HandlePizzaOrder(pizzaOrder);
-        return Ok(new
-        {
-            orderId,
-            requestedOrder = pizzaOrder.RequestedOrder
-        });
+        var result = await orderingService.HandlePizzaOrder(pizzaOrderRequest);
+        return Ok(result);
     }
 
     [HttpGet("{orderId}")]
-    public IActionResult GetOrderStatus(Guid orderId)
+    public async Task<IActionResult> GetOrderStatus(Guid orderId)
     {
-        var status = orderingService.GetOrderStatus(orderId);
+        var status = await orderingService.GetOrderStatus(orderId);
 
         return Ok(new
         {
             state = status.State.ToString(),
             error = status.Error,
-            pizzas = status.Pizzas?
-                .GroupBy(p => p.GetType().Name)
-                .Select(g => new { pizzaType = g.Key, amount = g.Count() })
+            lineItems = status.LineItems?
+                .Select(li => new
+                {
+                    pizzaType = li.RecipeType.ToString(),
+                    amount = li.Amount,
+                    completedAmount = li.CompletedAmount
+                })
         });
     }
 }

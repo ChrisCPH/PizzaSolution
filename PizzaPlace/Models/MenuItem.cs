@@ -1,5 +1,18 @@
-﻿using PizzaPlace.Models.Types;
+﻿namespace PizzaPlace.Models
+{
+    public class MenuItem
+    {
+        public long Id { get; set; }
+        public string Description { get; set; } = null!;
+        public double Price { get; set; }
+        public bool SoldOut { get; set; }
 
-namespace PizzaPlace;
+        public long MenuId { get; set; }
 
-public record MenuItem(string Description, PizzaRecipeType PizzaType, double Price, bool SoldOut = false);
+        [JsonIgnore]
+        public Menu Menu { get; set; } = null!;
+
+        public long PizzaRecipeId { get; set; }
+        public PizzaRecipe PizzaRecipe { get; set; } = null!;
+    }
+}

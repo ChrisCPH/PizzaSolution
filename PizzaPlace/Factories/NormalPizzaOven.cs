@@ -20,10 +20,27 @@ public class NormalPizzaOven(TimeProvider timeProvider) : PizzaOven(timeProvider
         }
     }
 
+    public override int CalculateCookingTime(ComparableList<PizzaPrepareOrder> order)
+    {
+        var durations = order
+            .SelectMany(o => Enumerable.Repeat(o.RecipeDto.CookingTimeMinutes, o.OrderAmount))
+            .OrderBy(d => d)
+            .ToList();
+
+        var slotFreeAt = new int[NormalPizzaOvenCapacity];
+
+        foreach (var duration in durations)
+        {
+            var earliestSlot = Array.IndexOf(slotFreeAt, slotFreeAt.Min());
+            slotFreeAt[earliestSlot] += duration;
+        }
+
+        return slotFreeAt.Max();
+    }
+
     private Func<Task<Pizza?>> MakePizza(PizzaRecipeDto recipe) => async () =>
     {
         await CookPizza(recipe.CookingTimeMinutes);
-
         return GetPizza(recipe.RecipeType);
     };
 }

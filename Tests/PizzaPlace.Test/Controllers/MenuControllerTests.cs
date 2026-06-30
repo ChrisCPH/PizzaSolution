@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PizzaPlace.Controllers;
 using PizzaPlace.Services;
+using PizzaPlace.Models;
 
 namespace PizzaPlace.Test.Controllers;
 
@@ -11,21 +12,21 @@ public class MenuControllerTests
         new(timeProvider, menuService.Object);
 
     [TestMethod]
-    public void GetMenu()
+    public async Task GetMenu()
     {
         // Arrange
         var time = new DateTimeOffset(2030, 10, 12, 0, 0, 0, TimeSpan.Zero);
         var timeProvider = new FakeTimeProvider(time);
-        var menu = new Menu("Just a test menu", []);
+        var menu = new Menu { Id = 1, Title = "Just a test menu", Items = [] };
 
         var menuService = new Mock<IMenuService>(MockBehavior.Strict);
         menuService.Setup(x => x.GetMenu(time))
-            .Returns(menu);
+            .ReturnsAsync(menu);
 
         var controller = GetController(timeProvider, menuService);
 
         // Act
-        var actual = controller.GetMenu();
+        var actual = await controller.GetMenu();
 
         // Assert
         Assert.IsInstanceOfType<OkObjectResult>(actual);

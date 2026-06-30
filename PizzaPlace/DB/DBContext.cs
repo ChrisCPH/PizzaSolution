@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PizzaPlace.Models;
-using PizzaPlace.Models.Types;
 
 namespace PizzaPlace.DB
 {
@@ -12,5 +11,9 @@ namespace PizzaPlace.DB
         public DbSet<PizzaRecipe> PizzaRecipes { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderLineItem> OrderLineItems { get; set; }
     }
 }

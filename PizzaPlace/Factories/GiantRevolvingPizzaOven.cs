@@ -44,4 +44,16 @@ public class GiantRevolvingPizzaOven(TimeProvider timeProvider) : PizzaOven(time
             }, guid));
         }
     }
+
+    public override int CalculateCookingTime(ComparableList<PizzaPrepareOrder> order)
+    {
+        return order
+            .GroupBy(o => o.RecipeDto.CookingTimeMinutes)
+            .Sum(group =>
+            {
+                var count = group.Sum(o => o.OrderAmount);
+                var batches = (int)Math.Ceiling(count / (double)GiantRevolvingPizzaOvenCapacity);
+                return batches * group.Key;
+            });
+    }
 }

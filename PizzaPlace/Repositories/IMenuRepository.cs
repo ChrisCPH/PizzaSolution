@@ -1,13 +1,11 @@
 ﻿using PizzaPlace.Models;
 
-namespace PizzaPlace.Services
+namespace PizzaPlace.Repositories
 {
-    public interface IMenuService
+    public interface IMenuRepository
     {
-        Task<Menu> GetMenu(DateTimeOffset menuDate);
-
         Task<long> AddMenu(Menu menu);
-        Task<Menu> GetMenuById(long menuId);
+        Task<Menu> GetMenu(long menuId);
         Task<List<Menu>> GetAllMenus();
         Task<Menu> UpdateMenu(Menu menu);
         Task DeleteMenu(long menuId);
@@ -15,5 +13,6 @@ namespace PizzaPlace.Services
         Task<long> AddMenuItem(MenuItem item);
         Task<MenuItem> UpdateMenuItem(MenuItem item);
         Task DeleteMenuItem(long itemId);
+
     }
 }

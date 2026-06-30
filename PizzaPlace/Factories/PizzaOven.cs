@@ -46,6 +46,8 @@ public abstract class PizzaOven(TimeProvider timeProvider) : IPizzaOven
         return readyPizzas;
     }
 
+    public abstract int CalculateCookingTime(ComparableList<PizzaPrepareOrder> order);
+
     protected abstract void PlanPizzaMaking(IEnumerable<(PizzaRecipeDto Recipe, Guid Guid)> recipeOrders);
 
     protected Task CookPizza(int cookingTimeMinutes) =>

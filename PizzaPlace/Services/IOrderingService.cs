@@ -5,6 +5,6 @@ namespace PizzaPlace.Services;
 
 public interface IOrderingService
 {
-    Task<Guid> HandlePizzaOrder(PizzaOrder order);
-    OrderStatus GetOrderStatus(Guid orderId);
+    Task<PizzaOrderResult> HandlePizzaOrder(PizzaOrderRequest request);
+    Task<OrderStatus> GetOrderStatus(Guid orderId);
 }
