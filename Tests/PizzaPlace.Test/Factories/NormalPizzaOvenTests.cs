@@ -14,6 +14,12 @@ public class NormalPizzaOvenTests
     public const int StandardPizzaPrepareTime = 10;
     public const int TastyPizzaPrepareTime = 15;
 
+    private static PizzaRecipeDto GetStandardRecipe() =>
+        GetTestStandardPizzaRecipe();
+
+    private static PizzaRecipeDto GetTastyRecipe() =>
+        GetTestTastyPizzaRecipe();
+
     [TestMethod]
     public async Task PreparePizzas_OnePizza()
     {
@@ -120,6 +126,84 @@ public class NormalPizzaOvenTests
 
         // Assert
         Assert.AreEqual("Not enough ingredients to create all pizzas.", ex.Message);
+    }
+
+    [TestMethod]
+    public void CalculateCookingTime_OnePizza_ShouldReturnCookingTime()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        ComparableList<PizzaPrepareOrder> order = [new(GetStandardRecipe(), 1)];
+        var expected = StandardPizzaPrepareTime;
+
+        // Act
+        var result = GetOven(timeProvider).CalculateCookingTime(order);
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void CalculateCookingTime_FourPizzasSameType_ShouldFillAllSlotsInOneBatch()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        ComparableList<PizzaPrepareOrder> order = [new(GetStandardRecipe(), 4)];
+        var expected = StandardPizzaPrepareTime;
+
+        // Act
+        var result = GetOven(timeProvider).CalculateCookingTime(order);
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void CalculateCookingTime_FivePizzasSameType_ShouldSpillIntoSecondSlot()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        ComparableList<PizzaPrepareOrder> order = [new(GetStandardRecipe(), 5)];
+        var expected = StandardPizzaPrepareTime * 2;
+
+        // Act
+        var result = GetOven(timeProvider).CalculateCookingTime(order);
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void CalculateCookingTime_MixedTypes_ShouldUseSlotsEfficiently()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        ComparableList<PizzaPrepareOrder> order =
+        [
+            new(GetStandardRecipe(), 2),
+            new(GetTastyRecipe(), 3),
+        ];
+        var expected = StandardPizzaPrepareTime + TastyPizzaPrepareTime;
+
+        // Act
+        var result = GetOven(timeProvider).CalculateCookingTime(order);
+
+        // Assert
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void CalculateCookingTime_EmptyOrder_ShouldReturnZero()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        ComparableList<PizzaPrepareOrder> order = [];
+
+        // Act
+        var result = GetOven(timeProvider).CalculateCookingTime(order);
+
+        // Assert
+        Assert.AreEqual(0, result);
     }
 
     public static PizzaRecipeDto GetTestStandardPizzaRecipe() =>

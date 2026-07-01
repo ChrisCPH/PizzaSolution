@@ -60,4 +60,16 @@ public class RecipeRepository : IRecipeRepository
 
         return existing.ToDto();
     }
+
+    public async Task<PizzaRecipeDto> GetRecipeById(long id)
+    {
+        var recipe = await _context.PizzaRecipes
+            .Include(x => x.Ingredients)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (recipe == null)
+            throw new PizzaException($"Recipe with id {id} does not exist.");
+
+        return recipe.ToDto();
+    }
 }

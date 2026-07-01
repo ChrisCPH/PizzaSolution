@@ -7,6 +7,7 @@ namespace PizzaPlace.Repositories
         Task<long> AddMenu(Menu menu);
         Task<Menu> GetMenu(long menuId);
         Task<List<Menu>> GetAllMenus();
+        Task<MenuItem> GetMenuItemById(long itemId);
         Task<Menu> UpdateMenu(Menu menu);
         Task DeleteMenu(long menuId);
 

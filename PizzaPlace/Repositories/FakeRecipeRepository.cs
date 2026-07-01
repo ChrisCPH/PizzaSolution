@@ -93,4 +93,9 @@ public class FakeRecipeRepository : FakeDatabase<PizzaRecipeDto>, IRecipeReposit
             ], 5),
         ];
     }
+
+    public Task<PizzaRecipeDto> GetRecipeById(long id)
+    {
+        throw new NotImplementedException();
+    }
 }

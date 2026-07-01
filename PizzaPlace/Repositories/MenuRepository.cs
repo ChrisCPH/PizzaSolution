@@ -105,5 +105,16 @@ namespace PizzaPlace.Repositories
             _context.MenuItems.Remove(existing);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<MenuItem> GetMenuItemById(long itemId)
+        {
+            var item = await _context.MenuItems
+                .FirstOrDefaultAsync(i => i.Id == itemId);
+
+            if (item == null)
+                throw new PizzaException($"MenuItem {itemId} not found.");
+
+            return item;
+        }
     }
 }
